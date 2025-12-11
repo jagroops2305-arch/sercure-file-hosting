@@ -62,12 +62,15 @@ Multer for file upload handling
 
 Backend Setup
 1. Install Dependencies
+
+Navigate to the backend folder and install the required packages:
+
 cd backend
 npm install
 
 2. Create Environment File
 
-Create a .env file inside the backend folder:
+Inside backend, create a .env file:
 
 PORT=5000
 MONGO_URI=mongodb://127.0.0.1:27017/securefilehosting
@@ -77,31 +80,29 @@ JWT_SECRET=your_secret_key_here
 npm run dev
 
 
-Backend will run on:
+The server should run on:
+
 http://localhost:5000
 
 Frontend Setup
 1. Open the Frontend Folder
 
-Open:
+Go to:
 
 frontend/
 
-2. Run HTML pages in a browser
+2. Open HTML pages in browser
 
-Example files:
+You can open any page directly, for example:
 
 register.html
-
 login.html
-
 upload.html
-
 myfiles.html
-
 downloads.html
 
-No framework or build tools required.
+
+No build tools or frameworks are required.
 
 API Endpoints
 Authentication
@@ -114,8 +115,40 @@ File Operations
 
 POST /api/upload – Upload a file (requires token)
 
-GET /api/my-files – Fetch logged-in user's files
+GET /api/my-files – Fetch files uploaded by logged-in user
 
 GET /api/public-files – Fetch all public files
 
-DELETE /api/files/:id – Delete user-owned file
+DELETE /api/files/:id – Delete a file (owner only)
+
+Folder Structure
+/backend
+    server.js
+    /controllers
+    /routes
+    /middleware
+    /models
+    /uploads
+/frontend
+    *.html
+    scripts.js
+    styles.css
+README.md
+
+How to Run the Full Application
+
+Start backend using npm run dev.
+
+Open frontend pages in the browser from the frontend folder.
+
+Register → Login → Upload → View Files → Delete or Download.
+
+Notes
+
+No hardcoded data is used; all information is stored in MongoDB.
+
+Only PDF and MP4 uploads are accepted.
+
+File deletion removes both the database entry and physical file.
+
+JWT tokens must be included in Authorization headers for protected routes.
