@@ -1,43 +1,60 @@
-// Handle file upload
-document.addEventListener("DOMContentLoaded", () => {
-    const uploadForm = document.getElementById("uploadForm");
+// Display logged-in user's uploaded files
+document.addEventListener("DOMContentLoaded", async () => {
+    const fileList = document.getElementById("fileList");
 
-    if (uploadForm) {
-        uploadForm.addEventListener("submit", async (e) => {
-            e.preventDefault();
+    if (fileList) {
+        const token = localStorage.getItem("token");
 
-            const token = localStorage.getItem("token");
+        if (!token) {
+            window.location.href = "login.html";
+            return;
+        }
 
-            if (!token) {
-                alert("You must be logged in to upload files.");
-                window.location.href = "login.html";
-                return;
+        const response = await fetch("http://localhost:5000/api/my-files", {
+            method: "GET",
+            headers: {
+                "Authorization": "Bearer " + token
             }
+        });
 
-            const formData = new FormData();
-            const file = document.getElementById("fileInput").files[0];
-            const privacy = document.getElementById("privacy").value;
+        const files = await response.json();
 
-            formData.append("file", file);
-            formData.append("privacy", privacy);
+        if (files.length === 0) {
+            fileList.innerHTML = "<p>You have not uploaded any files yet.</p>";
+            return;
+        }
 
-            const response = await fetch("http://localhost:5000/api/upload", {
-                method: "POST",
-                headers: {
-                    "Authorization": "Bearer " + token
-                },
-                body: formData
+        files.forEach(file => {
+            const fileDiv = document.createElement("div");
+            fileDiv.classList.add("file-item");
+
+            fileDiv.innerHTML = `
+                <p><strong>Filename:</strong> ${file.filename}</p>
+                <p><strong>Privacy:</strong> ${file.privacy}</p>
+                <p><strong>Size:</strong> ${(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                <button class="deleteBtn" data-id="${file._id}">Delete</button>
+                <hr>
+            `;
+
+            fileList.appendChild(fileDiv);
+        });
+
+        // Add delete functionality to each button
+        document.querySelectorAll(".deleteBtn").forEach(button => {
+            button.addEventListener("click", async () => {
+                const id = button.dataset.id;
+
+                const deleteResponse = await fetch("http://localhost:5000/api/files/" + id, {
+                    method: "DELETE",
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    }
+                });
+
+                const result = await deleteResponse.json();
+                alert(result.message);
+                location.reload();
             });
-
-            const result = await response.json();
-            const msg = document.getElementById("message");
-            msg.textContent = result.message;
-
-            if (response.status === 201) {
-                setTimeout(() => {
-                    window.location.href = "myfiles.html";
-                }, 1500);
-            }
         });
     }
 });
