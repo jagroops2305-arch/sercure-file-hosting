@@ -1,33 +1,42 @@
-// Handle user login
+// Handle file upload
 document.addEventListener("DOMContentLoaded", () => {
-    const loginForm = document.getElementById("loginForm");
+    const uploadForm = document.getElementById("uploadForm");
 
-    if (loginForm) {
-        loginForm.addEventListener("submit", async (e) => {
+    if (uploadForm) {
+        uploadForm.addEventListener("submit", async (e) => {
             e.preventDefault();
 
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
+            const token = localStorage.getItem("token");
 
-            const response = await fetch("http://localhost:5000/api/login", {
+            if (!token) {
+                alert("You must be logged in to upload files.");
+                window.location.href = "login.html";
+                return;
+            }
+
+            const formData = new FormData();
+            const file = document.getElementById("fileInput").files[0];
+            const privacy = document.getElementById("privacy").value;
+
+            formData.append("file", file);
+            formData.append("privacy", privacy);
+
+            const response = await fetch("http://localhost:5000/api/upload", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password })
+                headers: {
+                    "Authorization": "Bearer " + token
+                },
+                body: formData
             });
 
             const result = await response.json();
-
             const msg = document.getElementById("message");
             msg.textContent = result.message;
 
-            if (response.status === 200) {
-                // Store JWT Token
-                localStorage.setItem("token", result.token);
-
-                // Redirect after successful login
+            if (response.status === 201) {
                 setTimeout(() => {
-                    window.location.href = "upload.html";
-                }, 1000);
+                    window.location.href = "myfiles.html";
+                }, 1500);
             }
         });
     }

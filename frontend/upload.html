@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload File</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<h2>Upload a File</h2>
+
+<form id="uploadForm" enctype="multipart/form-data">
+    <input type="file" id="fileInput" name="file" required><br>
+
+    <label>Privacy:</label>
+    <select id="privacy">
+        <option value="public">Public</option>
+        <option value="private">Private</option>
+    </select><br>
+
+    <button type="submit">Upload</button>
+</form>
+
+<p id="message"></p>
+
+<script src="scripts.js"></script>
+</body>
+</html>
