@@ -1,19 +1,18 @@
-// Handle user registration
+// Handle user login
 document.addEventListener("DOMContentLoaded", () => {
-    const registerForm = document.getElementById("registerForm");
+    const loginForm = document.getElementById("loginForm");
 
-    if (registerForm) {
-        registerForm.addEventListener("submit", async (e) => {
+    if (loginForm) {
+        loginForm.addEventListener("submit", async (e) => {
             e.preventDefault();
 
-            const username = document.getElementById("username").value;
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
 
-            const response = await fetch("http://localhost:5000/api/register", {
+            const response = await fetch("http://localhost:5000/api/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, email, password })
+                body: JSON.stringify({ email, password })
             });
 
             const result = await response.json();
@@ -21,8 +20,14 @@ document.addEventListener("DOMContentLoaded", () => {
             const msg = document.getElementById("message");
             msg.textContent = result.message;
 
-            if (response.status === 201) {
-                setTimeout(() => window.location.href = "login.html", 1500);
+            if (response.status === 200) {
+                // Store JWT Token
+                localStorage.setItem("token", result.token);
+
+                // Redirect after successful login
+                setTimeout(() => {
+                    window.location.href = "upload.html";
+                }, 1000);
             }
         });
     }
