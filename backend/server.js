@@ -1,7 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const mongoose = require("mongoose"); // <-- YOU FORGOT THIS LINE
-require("dotenv").config();
+const mongoose = require("mongoose"); 
 
 const app = express();
 
@@ -16,6 +15,10 @@ mongoose.connect(process.env.MONGO_URI)
 // Routes
 const authRoutes = require('./routes/authroutes.js');
 app.use('/api', authRoutes);
+
+// File upload routes
+const fileRoutes = require('./routes/fileRoutes');
+app.use('/api', fileRoutes);
 
 // Default route
 app.get("/", (req, res) => {
