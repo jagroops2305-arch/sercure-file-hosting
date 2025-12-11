@@ -27,3 +27,25 @@ exports.uploadFile = async (req, res) => {
         return res.status(500).json({ message: "Server error" });
     }
 };
+
+// GET PUBLIC FILES
+exports.getPublicFiles = async (req, res) => {
+    try {
+        const files = await File.find({ privacy: "public" }).sort({ uploaded_at: -1 });
+        return res.status(200).json(files);
+    } catch (error) {
+        console.error("Error in getPublicFiles:", error);
+        return res.status(500).json({ message: "Server error" });
+    }
+};
+
+// GET MY FILES
+exports.getMyFiles = async (req, res) => {
+    try {
+        const files = await File.find({ uploaded_by: req.user.id }).sort({ uploaded_at: -1 });
+        return res.status(200).json(files);
+    } catch (error) {
+        console.error("Error in getMyFiles:", error);
+        return res.status(500).json({ message: "Server error" });
+    }
+};
